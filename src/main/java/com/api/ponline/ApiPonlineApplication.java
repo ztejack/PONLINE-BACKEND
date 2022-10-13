@@ -1,4 +1,4 @@
-package com.api.ponline.apiponline;
+package com.api.ponline;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

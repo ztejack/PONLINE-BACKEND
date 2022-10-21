@@ -16,12 +16,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.api.ponline.tools.PondTools;
-
 
 @Entity
-@Table(name = "TAB_USER_AUTH")
-public class UserAuth implements UserDetails{
+@Table(name = "TAB_USERS")
+public class User implements UserDetails{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,6 +36,15 @@ public class UserAuth implements UserDetails{
     @Column(name = "uqsweerrrtoyluei", nullable = false)
     private UserRole userRole;
 
+    @Column(name = "fquwlelrntaymuei", nullable = false, length = 50)
+    private String fullName;
+
+    @Column(name = "pqhwoenret", length = 15)
+    private String phone;
+
+    @Column(name = "aqdwderretsysu", length = 100)
+    private String address;
+    
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userRole.name());
@@ -101,6 +108,32 @@ public class UserAuth implements UserDetails{
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
     }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    
 
     
     

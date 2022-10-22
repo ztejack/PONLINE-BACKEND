@@ -1,4 +1,4 @@
-package com.api.ponline.utils;
+package com.api.ponline.tools;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

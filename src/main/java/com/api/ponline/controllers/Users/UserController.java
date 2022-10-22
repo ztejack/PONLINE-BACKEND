@@ -1,5 +1,7 @@
 package com.api.ponline.controllers.Users;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
@@ -52,9 +54,14 @@ public class UserController {
 
     }
 
-    @GetMapping
+    @GetMapping("/readall")
     public Iterable<User> findAll(){
         return usersService.findAll();
+    }
+
+    @GetMapping
+    public String welcome(){
+        return "Welcome to API PONLINE for User";
     }
     
 }

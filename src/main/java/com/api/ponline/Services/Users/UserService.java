@@ -1,5 +1,7 @@
 package com.api.ponline.Services.Users;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.api.ponline.Models.Entity.Users.User;
+import com.api.ponline.Models.Entity.Users.UserRole;
 import com.api.ponline.Models.Repo.Users.UserRepo;
 
 @Service
@@ -26,22 +29,32 @@ public class UserService implements UserDetailsService{
         return userAuthRepo.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(String.format("User with email '%s' not found", email)));
     }
 
-    public User registeUser(User userAuth) {
-        boolean userExist = userAuthRepo.findByEmail(userAuth.getEmail()).isPresent();
+    public User registeUser(User user) {
+        boolean userExist = userAuthRepo.findByEmail(user.getEmail()).isPresent();
 
         if (userExist) {
             throw new RuntimeException(
-                String.format("User with email '%s' already exist", userAuth.getEmail())
+                String.format("Pengguna dengan email '%s' sudah terdaftar", user.getEmail())
+            );
+        }else if(user.getUserRole().equals(UserRole.PQOWNEDR)){
+            throw new RuntimeException(
+                String.format("Hubungi Admin Untuk Mendaftar Dengan Peran Tersebut")
             );
         }
 
-        String encodedPassword = bCryptPasswordEncoder.encode(userAuth.getPassword());
-        userAuth.setPassword(encodedPassword);
-        return userAuthRepo.save(userAuth);
+        String encodedPassword = bCryptPasswordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+        return userAuthRepo.save(user);
     }
 
     public Iterable<User> findAll() {
         return userAuthRepo.findAll();
     }
+
+    public List<User> findByUserRole(UserRole userRole) {
+        return userAuthRepo.findByUserRole(userRole);
+    }
+
+
     
 }

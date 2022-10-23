@@ -1,7 +1,9 @@
 package com.api.ponline.Models.Entity.Users;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,7 +46,26 @@ public class User implements UserDetails{
 
     @Column(name = "aqdwderretsysu", length = 100)
     private String address;
-    
+
+    @Column(name = "iqswveerrtiyfuyi", nullable = false)
+    private Boolean isVerify;
+
+    @Column(name = "tqswveerrtiyfuyi", length = 64)
+    private String tokenVerification;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "uqsweerrptryouviiodpeqrw", nullable = false)
+    private UserProvider userProvider;
+
+    @Column(name = "tqRweesrptaysusiwooprdq", length = 64)
+    private String tokenResetPassword;
+
+    @Column(name = "dqawteerctryeuaitoepdq", nullable = false)
+    private Date dateCreated;
+
+    @Column(name = "dqawteerutpyduaitoep", nullable = false)
+    private Date dateUpdate;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(userRole.name());
@@ -78,9 +99,9 @@ public class User implements UserDetails{
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isVerify;
     }
-
+    
     public Long getId() {
         return id;
     }
@@ -133,8 +154,52 @@ public class User implements UserDetails{
         this.address = address;
     }
 
-    
+    public UserProvider getUserProvider() {
+        return userProvider;
+    }
 
-    
+    public void setUserProvider(UserProvider userProvider) {
+        this.userProvider = userProvider;
+    }
+
+    public String getTokenResetPassword() {
+        return tokenResetPassword;
+    }
+
+    public void setTokenResetPassword(String tokenResetPassword) {
+        this.tokenResetPassword = tokenResetPassword;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public Date getDateUpdate() {
+        return dateUpdate;
+    }
+
+    public void setDateUpdate(Date dateUpdate) {
+        this.dateUpdate = dateUpdate;
+    }
+
+    public Boolean getIsVerify() {
+        return isVerify;
+    }
+
+    public void setIsVerify(Boolean isVerify) {
+        this.isVerify = isVerify;
+    }
+
+    public String getTokenVerification() {
+        return tokenVerification;
+    }
+
+    public void setTokenVerification(String tokenVerification) {
+        this.tokenVerification = tokenVerification;
+    }
     
 }

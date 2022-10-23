@@ -27,12 +27,20 @@ public class WebSecuirtyConfig extends WebSecurityConfigurerAdapter{
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
         .authorizeRequests()
-        .antMatchers("/documentation/**").permitAll()
-        .antMatchers("/users/register").permitAll()
-        .antMatchers("/users/readall").hasAuthority("PQOWNEDR")
+        .antMatchers("/**").permitAll()
         .anyRequest().fullyAuthenticated()
         .and().httpBasic();
         // .and().oauth2Login();
+
+        // http
+        // .authorizeRequests()
+        // .antMatchers("/**").permitAll()
+        // .and()
+        // .authorizeRequests()
+        // .antMatchers("/users/readall").hasAuthority("PQOWNEDR")
+        // .anyRequest().authenticated()
+        // .and()
+        // .httpBasic();
 
         
     }

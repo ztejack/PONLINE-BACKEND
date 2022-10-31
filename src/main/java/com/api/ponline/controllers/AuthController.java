@@ -1,20 +1,24 @@
 package com.api.ponline.controllers;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.util.List;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +28,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.api.ponline.dto.ApiResponse;
 import com.api.ponline.dto.AuthResponse;
-import com.api.ponline.dto.ResponseData;
 import com.api.ponline.dto.user.LoginRequest;
 import com.api.ponline.dto.user.ResetPasswordRequest;
 import com.api.ponline.dto.user.SignUpRequest;
@@ -46,6 +49,9 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
+    private JavaMailSender mailSender;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -53,6 +59,7 @@ public class AuthController {
 
     @Autowired
     private TokenProvider tokenProvider;
+
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -97,7 +104,7 @@ public class AuthController {
     }
 
     @GetMapping("/forgotpassword")
-    public ResponseEntity<?> forgotpassword(@RequestParam String email) {
+    public ResponseEntity<?> forgotpassword(@RequestParam String email, HttpServletRequest request) throws UnsupportedEncodingException, MessagingException {
         if(!userRepository.existsByEmail(email)) {
             throw new ResourceNotFoundException("User", "Email", email);
         }
@@ -106,6 +113,7 @@ public class AuthController {
         String token = RandomString.make(64);
         user.setTokResetPassword(token);
         userRepository.save(user);
+        sendMailForgotPassword(user, "http://localhost:8080/auth");
         return ResponseEntity.ok(new ApiResponse(true, "cek email"));
 
     }
@@ -122,6 +130,34 @@ public class AuthController {
         user.setTokResetPassword(null);
         userRepository.save(user);
         return ResponseEntity.ok(new ApiResponse(true, "Success"));
+    }
+
+    private void sendMailForgotPassword(User user, String siteURL) throws UnsupportedEncodingException, MessagingException {
+        String toAddress = user.getEmail();
+        String fromAddress = "support@ponline.com";
+        String senderName = "PONLINE SUPPORT ○ reset password";
+        String subject = "Please verify your registration";
+        String content = "Dear [[name]],<br>"
+                + "Please click the link below to reset your password:<br>"
+                + "<h3><a href=\"[[URL]]\" target=\"_self\">RESET</a></h3>"
+                + "Thank you,<br>"
+                + "PONLINE Teams.";
+         
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+         
+        helper.setFrom(fromAddress, senderName);
+        helper.setTo(toAddress);
+        helper.setSubject(subject);
+         
+        content = content.replace("[[name]]", user.getName());
+        String resetLink = siteURL + "/resetpassword?token=" + user.getTokResetPassword();
+         
+        content = content.replace("[[URL]]", resetLink);
+         
+        helper.setText(content, true);
+         
+        mailSender.send(message);
     }
 
 }

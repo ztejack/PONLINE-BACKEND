@@ -1,8 +1,8 @@
 package com.api.ponline.controllers;
 
 import com.api.ponline.exception.ResourceNotFoundException;
-import com.api.ponline.model.User;
-import com.api.ponline.repository.UserRepository;
+import com.api.ponline.model.user.User;
+import com.api.ponline.repository.user.UserRepository;
 import com.api.ponline.security.CurrentUser;
 import com.api.ponline.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;

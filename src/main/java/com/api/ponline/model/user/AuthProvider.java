@@ -1,4 +1,4 @@
-package com.api.ponline.model;
+package com.api.ponline.model.user;
 
 public enum  AuthProvider {
     local,

@@ -1,4 +1,4 @@
-package com.api.ponline.payload;
+package com.api.ponline.dto;
 
 public class ApiResponse {
     private boolean success;

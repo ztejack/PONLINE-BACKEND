@@ -1,7 +1,7 @@
 package com.api.ponline.security.oauth2.user;
 
 import com.api.ponline.exception.OAuth2AuthenticationProcessingException;
-import com.api.ponline.model.AuthProvider;
+import com.api.ponline.model.user.AuthProvider;
 
 import java.util.Map;
 

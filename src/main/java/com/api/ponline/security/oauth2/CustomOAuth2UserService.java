@@ -1,9 +1,10 @@
 package com.api.ponline.security.oauth2;
 
 import com.api.ponline.exception.OAuth2AuthenticationProcessingException;
-import com.api.ponline.model.AuthProvider;
-import com.api.ponline.model.User;
-import com.api.ponline.repository.UserRepository;
+import com.api.ponline.model.user.AuthProvider;
+import com.api.ponline.model.user.User;
+import com.api.ponline.model.user.UserRole;
+import com.api.ponline.repository.user.UserRepository;
 import com.api.ponline.security.UserPrincipal;
 import com.api.ponline.security.oauth2.user.OAuth2UserInfo;
 import com.api.ponline.security.oauth2.user.OAuth2UserInfoFactory;
@@ -66,6 +67,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         User user = new User();
 
         user.setProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
+        user.setRole(UserRole.ROLE_USER);
         user.setProviderId(oAuth2UserInfo.getId());
         user.setName(oAuth2UserInfo.getName());
         user.setEmail(oAuth2UserInfo.getEmail());

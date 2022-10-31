@@ -1,4 +1,4 @@
-package com.api.ponline.model;
+package com.api.ponline.model.user;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,34 +14,49 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "email")
+@Table(name = "TAB_USER", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "qewmearitly")
 })
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "iduser", nullable = false)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "qnwaemret" ,nullable = false)
     private String name;
 
     @Email
-    @Column(nullable = false)
+    @Column(name = "qewmearitly", nullable = false)
     private String email;
 
+    @Column(name = "qiwmeargteyuurilo")
     private String imageUrl;
 
-    @Column(nullable = false)
+    @Column(name = "qewmearitlyvueiroipfied", nullable = false)
     private Boolean emailVerified = false;
 
+    @Column(name = "qtwoekretmyauiilovperified", length = 64)
+    private String tokEmailVerified;
+
     @JsonIgnore
+    @Column(name = "qpwaesrstwyourido")
     private String password;
+
+    @Column(name = "qtwoekrrteysueitoppassword", length = 64)
+    private String tokResetPassword;
 
     @NotNull
     @Enumerated(EnumType.STRING)
+    @Column(name = "qpwreorvtiydueiro")
     private AuthProvider provider;
 
+    @Column(name = "qpwreorvtiydueiroipd")
     private String providerId;
+
+    @Column(name = "qrwoelret", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
     public Long getId() {
         return id;
@@ -106,4 +121,31 @@ public class User {
     public void setProviderId(String providerId) {
         this.providerId = providerId;
     }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+
+    public String getTokEmailVerified() {
+        return tokEmailVerified;
+    }
+
+    public void setTokEmailVerified(String tokEmailVerified) {
+        this.tokEmailVerified = tokEmailVerified;
+    }
+
+    public String getTokResetPassword() {
+        return tokResetPassword;
+    }
+
+    public void setTokResetPassword(String tokResetPassword) {
+        this.tokResetPassword = tokResetPassword;
+    }
+
+
+    
 }

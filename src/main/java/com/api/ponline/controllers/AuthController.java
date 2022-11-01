@@ -38,6 +38,7 @@ import com.api.ponline.model.user.User;
 import com.api.ponline.model.user.UserRole;
 import com.api.ponline.repository.user.UserRepository;
 import com.api.ponline.security.TokenProvider;
+import com.nimbusds.oauth2.sdk.http.HTTPResponse;
 
 import net.bytebuddy.utility.RandomString;
 
@@ -62,28 +63,42 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws UnsupportedEncodingException, MessagingException {
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getEmail(),
-                        loginRequest.getPassword()
-                )
-        );
+        User user = userRepository.findOneByEmail(loginRequest.getEmail());
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String token = tokenProvider.createToken(authentication);
-        return ResponseEntity.ok(new AuthResponse(token));
+        if (user!=null) {
+            if (user.getEmailVerified()) {
+                Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getEmail(),
+                            loginRequest.getPassword()
+                    )
+                );
+    
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+    
+                String token = tokenProvider.createToken(authentication);
+                return ResponseEntity.ok(new AuthResponse(token));
+            }else{
+                String token = RandomString.make(64);
+                user.setTokEmailVerified(token);
+                userRepository.save(user);
+                sendMailVerification(user, "http://localhost:8080/auth");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, "Akun anda belum diverifikasi, Silahkan cek email untuk memverifikasi akun anda"));
+            }
+            
+        }else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, "Akun anda belum terdaftar"));
+        }
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) throws UnsupportedEncodingException, MessagingException {
         if(userRepository.existsByEmail(signUpRequest.getEmail())) {
-            throw new BadRequestException("Email address already in use.");
+            throw new BadRequestException("Alamat email sudah terdaftar");
         }
-
-        // Creating user's account
+        
         User user = new User();
         user.setName(signUpRequest.getName());
         user.setEmail(signUpRequest.getEmail());
@@ -91,16 +106,34 @@ public class AuthController {
         user.setProvider(AuthProvider.local);
         user.setRole(UserRole.ROLE_USER);
 
+        String token = RandomString.make(64);
+        user.setEmailVerified(false);
+        user.setTokEmailVerified(token);
+
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
+        sendMailVerification(user, "http://localhost:8080/auth");
 
-        User result = userRepository.save(user);
 
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath().path("/user/me")
-                .buildAndExpand(result.getId()).toUri();
+        // URI location = ServletUriComponentsBuilder
+        //         .fromCurrentContextPath().path("/user/me")
+        //         .buildAndExpand(result.getId()).toUri();
 
-        return ResponseEntity.created(location)
-                .body(new ApiResponse(true, "User registered successfully@"));
+        return ResponseEntity.ok(new ApiResponse(true, "Berhasil mendaftar, Silahkan cek email untuk verifikasi"));
+    }
+
+    @GetMapping("/verifymail")
+    public ResponseEntity<?> verifymail(@RequestParam String token) {
+
+        if(userRepository.findByTokEmailVerified(token).isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "User not Found"));
+        }
+
+        User user = userRepository.findByTokEmailVerified(token).get(0);
+        user.setEmailVerified(true);
+        user.setTokEmailVerified(null);
+        userRepository.save(user);
+        return ResponseEntity.ok(new ApiResponse(true, "Berhasil memverifikasi email"));
     }
 
     @GetMapping("/forgotpassword")
@@ -114,7 +147,7 @@ public class AuthController {
         user.setTokResetPassword(token);
         userRepository.save(user);
         sendMailForgotPassword(user, "http://localhost:8080/auth");
-        return ResponseEntity.ok(new ApiResponse(true, "cek email"));
+        return ResponseEntity.ok(new ApiResponse(true, "Silahkan cek email untuk mereset password anda"));
 
     }
 
@@ -122,14 +155,14 @@ public class AuthController {
     public ResponseEntity<?> resetPasswordUser(@RequestParam String token, @Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
 
         if(userRepository.findByTokResetPassword(token).isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "User not Found"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(false, "User tidak di temukan"));
         }
 
         User user = userRepository.findByTokResetPassword(token).get(0);
         user.setPassword(passwordEncoder.encode(resetPasswordRequest.getPassword()));
         user.setTokResetPassword(null);
         userRepository.save(user);
-        return ResponseEntity.ok(new ApiResponse(true, "Success"));
+        return ResponseEntity.ok(new ApiResponse(true, "Berhasil memperbarui password"));
     }
 
     private void sendMailForgotPassword(User user, String siteURL) throws UnsupportedEncodingException, MessagingException {
@@ -138,7 +171,7 @@ public class AuthController {
         String senderName = "PONLINE SUPPORT ○ reset password";
         String subject = "Please verify your registration";
         String content = "Dear [[name]],<br>"
-                + "Please click the link below to reset your password:<br>"
+                + "Mohon cek link di bawah untuk membuat password baru<br>"
                 + "<h3><a href=\"[[URL]]\" target=\"_self\">RESET</a></h3>"
                 + "Thank you,<br>"
                 + "PONLINE Teams.";
@@ -152,6 +185,34 @@ public class AuthController {
          
         content = content.replace("[[name]]", user.getName());
         String resetLink = siteURL + "/resetpassword?token=" + user.getTokResetPassword();
+         
+        content = content.replace("[[URL]]", resetLink);
+         
+        helper.setText(content, true);
+         
+        mailSender.send(message);
+    }
+
+    private void sendMailVerification(User user, String siteURL) throws UnsupportedEncodingException, MessagingException {
+        String toAddress = user.getEmail();
+        String fromAddress = "support@ponline.com";
+        String senderName = "PONLINE SUPPORT ○ reset password";
+        String subject = "Please verify your registration";
+        String content = "Dear [[name]],<br>"
+                + "Mohon cek email di bawah untuk memverifikasi email anda :<br>"
+                + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
+                + "Thank you,<br>"
+                + "PONLINE Teams.";
+         
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+         
+        helper.setFrom(fromAddress, senderName);
+        helper.setTo(toAddress);
+        helper.setSubject(subject);
+         
+        content = content.replace("[[name]]", user.getName());
+        String resetLink = siteURL + "/verifymail?token=" + user.getTokEmailVerified();
          
         content = content.replace("[[URL]]", resetLink);
          

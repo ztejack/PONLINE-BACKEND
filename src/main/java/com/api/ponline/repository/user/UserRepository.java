@@ -20,6 +20,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByTokResetPassword(String tokResetPassword);
 
+    List<User> findByTokEmailVerified(String tokEmailVerified);
+
     @Query("SELECT u FROM User u WHERE u.email = :email")
     public User findOneByEmail(@PathParam("email") String email);
     

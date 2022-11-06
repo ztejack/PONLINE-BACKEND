@@ -1,4 +1,6 @@
 package com.api.ponline.model.Entity.user;
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -16,12 +18,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 // Buat Entiti Users
 @Entity
 @Table(name = "TAB_USER")
-public class User {
+public class User implements Serializable{
 
     // Field Entiti User
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "iduser", nullable = false)
+    @Column(name = "qiwdeursteyru", nullable = false)
     private Long id;
 
     @Column(name = "qnwaemret" ,nullable = false)

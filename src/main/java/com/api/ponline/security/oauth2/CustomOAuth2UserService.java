@@ -23,9 +23,11 @@ import java.util.Optional;
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
+    // injeksi class user repositori
     @Autowired
     private UserRepository userRepository;
 
+    // tulis ulang (overide) class loadUser dari lib 'DefaultOAuth2UserSercvice'
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);

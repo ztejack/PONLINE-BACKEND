@@ -27,10 +27,12 @@ public class UserPrincipal implements OAuth2User, UserDetails {
         this.authorities = authorities;
     }
 
+    // Buat Kelas User Utama
     public static UserPrincipal create(User user) {
-        List<GrantedAuthority> authorities = Collections.
-                singletonList(new SimpleGrantedAuthority(UserRole.ROLE_USER.name()));
+        // List otoritas yang akan di berikan ke user
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(UserRole.ROLE_USER.name()));
 
+        // Kembalikan objek user utama
         return new UserPrincipal(
                 user.getId(),
                 user.getEmail(),

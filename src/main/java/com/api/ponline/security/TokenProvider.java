@@ -20,12 +20,15 @@ public class TokenProvider {
         this.appProperties = appProperties;
     }
 
+    // method buat autentifikasi token akses
     public String createToken(Authentication authentication) {
+        // Ambil data user utama di objek autentifikasi
         UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-
+        // Buat objek tanggal sekarang / di buatnya token
         Date now = new Date();
+        // Buat tanggal kadalwarsa untuk tokenya (diambil dari app properti)
         Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec());
-
+        // Proses buat token dan kembalikan
         return Jwts.builder()
                 .setSubject(Long.toString(userPrincipal.getId()))
                 .setIssuedAt(new Date())

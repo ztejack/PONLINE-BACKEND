@@ -1,10 +1,8 @@
 package com.api.ponline.controllers;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -12,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.api.ponline.dto.ApiResponse;
 import com.api.ponline.dto.AuthResponse;
@@ -38,7 +34,7 @@ import com.api.ponline.model.user.User;
 import com.api.ponline.model.user.UserRole;
 import com.api.ponline.repository.user.UserRepository;
 import com.api.ponline.security.TokenProvider;
-import com.nimbusds.oauth2.sdk.http.HTTPResponse;
+import com.api.ponline.util.PonTools;
 
 import net.bytebuddy.utility.RandomString;
 
@@ -50,9 +46,6 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private JavaMailSender mailSender;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -61,7 +54,15 @@ public class AuthController {
     @Autowired
     private TokenProvider tokenProvider;
 
-
+    @Autowired
+    private JavaMailSender mailSender;
+    
+    private PonTools ponTools;
+    
+    public AuthController(){
+        this.ponTools = new PonTools();
+    }
+    
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) throws UnsupportedEncodingException, MessagingException {
 
@@ -84,7 +85,19 @@ public class AuthController {
                 String token = RandomString.make(64);
                 user.setTokEmailVerified(token);
                 userRepository.save(user);
-                sendMailVerification(user, "http://localhost:8080/auth");
+                
+                ponTools.sendMailWithButton(
+                    mailSender, 
+                    user, 
+                    "PONLINE SUPPORT ○ verify email", 
+                    "Click the button below to verify your email.", 
+                    "", 
+                    "", 
+                    "If the 'Verify Email' button cannot be used, click on the following link: ",
+                    "Verify Email", 
+                    ponTools.ponlineBaseUrl()+"/auth/verifymail?token=" + token
+                    );
+
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, "Akun anda belum diverifikasi, Silahkan cek email untuk memverifikasi akun anda"));
             }
             
@@ -112,12 +125,17 @@ public class AuthController {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-        sendMailVerification(user, "http://localhost:8080/auth");
-
-
-        // URI location = ServletUriComponentsBuilder
-        //         .fromCurrentContextPath().path("/user/me")
-        //         .buildAndExpand(result.getId()).toUri();
+        ponTools.sendMailWithButton(
+            mailSender, 
+            user, 
+            "PONLINE SUPPORT ○ verify email", 
+            "Click the button below to verify your email.", 
+            "", 
+            "", 
+            "If the 'Verify Email' button cannot be used, click on the following link: ",
+            "Verify Email", 
+            ponTools.ponlineBaseUrl()+"/auth/verifymail?token=" + token
+            );
 
         return ResponseEntity.ok(new ApiResponse(true, "Berhasil mendaftar, Silahkan cek email untuk verifikasi"));
     }
@@ -146,7 +164,18 @@ public class AuthController {
         String token = RandomString.make(64);
         user.setTokResetPassword(token);
         userRepository.save(user);
-        sendMailForgotPassword(user, "http://localhost:8080/auth");
+        ponTools.sendMailWithButton(
+            mailSender, 
+            user, 
+            "PONLINE SUPPORT ○ forgot password", 
+            "You are receiving this email because we received a password reset request for your account.", 
+            "This password reset link will expire in 60 minutes.", 
+            "If you did not request a password reset, no further action is required.", 
+            "If you're having trouble clicking the \"Reset Password\" button, copy and paste the URL below into your web browser: ",
+            "Reset Password", 
+            ponTools.ponlineBaseUrl()+"/auth/resetpassword?token=" + token
+            );
+
         return ResponseEntity.ok(new ApiResponse(true, "Silahkan cek email untuk mereset password anda"));
 
     }
@@ -163,62 +192,6 @@ public class AuthController {
         user.setTokResetPassword(null);
         userRepository.save(user);
         return ResponseEntity.ok(new ApiResponse(true, "Berhasil memperbarui password"));
-    }
-
-    private void sendMailForgotPassword(User user, String siteURL) throws UnsupportedEncodingException, MessagingException {
-        String toAddress = user.getEmail();
-        String fromAddress = "support@ponline.com";
-        String senderName = "PONLINE SUPPORT ○ reset password";
-        String subject = "Please verify your registration";
-        String content = "Dear [[name]],<br>"
-                + "Mohon cek link di bawah untuk membuat password baru<br>"
-                + "<h3><a href=\"[[URL]]\" target=\"_self\">RESET</a></h3>"
-                + "Thank you,<br>"
-                + "PONLINE Teams.";
-         
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
-         
-        helper.setFrom(fromAddress, senderName);
-        helper.setTo(toAddress);
-        helper.setSubject(subject);
-         
-        content = content.replace("[[name]]", user.getName());
-        String resetLink = siteURL + "/resetpassword?token=" + user.getTokResetPassword();
-         
-        content = content.replace("[[URL]]", resetLink);
-         
-        helper.setText(content, true);
-         
-        mailSender.send(message);
-    }
-
-    private void sendMailVerification(User user, String siteURL) throws UnsupportedEncodingException, MessagingException {
-        String toAddress = user.getEmail();
-        String fromAddress = "support@ponline.com";
-        String senderName = "PONLINE SUPPORT ○ reset password";
-        String subject = "Please verify your registration";
-        String content = "Dear [[name]],<br>"
-                + "Mohon cek email di bawah untuk memverifikasi email anda :<br>"
-                + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
-                + "Thank you,<br>"
-                + "PONLINE Teams.";
-         
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
-         
-        helper.setFrom(fromAddress, senderName);
-        helper.setTo(toAddress);
-        helper.setSubject(subject);
-         
-        content = content.replace("[[name]]", user.getName());
-        String resetLink = siteURL + "/verifymail?token=" + user.getTokEmailVerified();
-         
-        content = content.replace("[[URL]]", resetLink);
-         
-        helper.setText(content, true);
-         
-        mailSender.send(message);
     }
 
 }

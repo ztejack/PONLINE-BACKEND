@@ -1,9 +1,10 @@
 spring:
+    # Konfigurasi Properti Database
     datasource:
         url: jdbc:mysql://localhost:3306/datbes_ponline?useSSL=false
         username: root
         password: 
-    
+    # Konfigurasi Properti Email Sender
     mail:
         host: smtp.gmail.com
         port: 587
@@ -15,7 +16,7 @@ spring:
             auth: true
             starttls.enable: true
             ssl.trust: smtp.gmail.com
-
+    # Konfigurasi Properti JPA (spring.jpa)
     jpa:
         show-sql: true
         hibernate:
@@ -24,10 +25,12 @@ spring:
         properties:
             hibernate:
                 dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    # Konfigurasi Keamanan Program (spring.oauth2)
     security:
       oauth2:
         client:
           registration:
+            # Konfigurasi Client id & Secret Google Console
             google:
               clientId: 371012063788-5denl53bpa1jkjust7k5l0n60v090ngd.apps.googleusercontent.com
               clientSecret: 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
@@ -35,28 +38,9 @@ spring:
               scope:
                 - email
                 - profile
-          #   facebook:
-          #     clientId: 803620500875649
-          #     clientSecret: 7cfa1953d78b73effbf007c771e82c58
-          #     redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
-          #     scope:
-          #       - email
-          #       - public_profile
-          #   github:
-          #     clientId: d3e47fc2ddd966fa4352
-          #     clientSecret: 3bc0f6b8332f93076354c2a5bada2f5a05aea60d
-          #     redirectUriTemplate: "{baseUrl}/oauth2/callback/{registrationId}"
-          #     scope:
-          #       - user:email
-          #       - read:user
-          # provider:
-          #   facebook:
-          #     authorizationUri: https://www.facebook.com/v3.0/dialog/oauth
-          #     tokenUri: https://graph.facebook.com/v3.0/oauth/access_token
-          #     userInfoUri: https://graph.facebook.com/v3.0/me?fields=id,first_name,middle_name,last_name,name,email,verified,is_verified,picture.width(250).height(250)
 app:
   auth:
-    tokenSecret: PQOWNELRITNYEUSIEOCPRQEWTEKRETYYU # Base Token Secret
+    tokenSecret: PQOWNELRITNYEUSIEOCPRQEWTEKRETYYU # Base token untuk akses pengguna
     tokenExpirationMsec: 86400000 # Token Kadalwarsa dalam 86400000 ms / 24 jam
   oauth2:
     authorizedRedirectUris:

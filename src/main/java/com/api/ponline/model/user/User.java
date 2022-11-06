@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+// ORM UNTUK OBJEK USER
 @Entity
 @Table(name = "TAB_USER", uniqueConstraints = {
         @UniqueConstraint(columnNames = "qewmearitly")

@@ -1,10 +1,10 @@
 package com.api.ponline.security.oauth2;
 
-import com.api.ponline.exception.OAuth2AuthenticationProcessingException;
-import com.api.ponline.model.user.AuthProvider;
-import com.api.ponline.model.user.User;
-import com.api.ponline.model.user.UserRole;
-import com.api.ponline.repository.user.UserRepository;
+import com.api.ponline.dao.exception.OAuth2AuthenticationProcessingException;
+import com.api.ponline.model.Entity.user.AuthProvider;
+import com.api.ponline.model.Entity.user.User;
+import com.api.ponline.model.Entity.user.UserRole;
+import com.api.ponline.model.repository.user.UserRepository;
 import com.api.ponline.security.UserPrincipal;
 import com.api.ponline.security.oauth2.user.OAuth2UserInfo;
 import com.api.ponline.security.oauth2.user.OAuth2UserInfoFactory;

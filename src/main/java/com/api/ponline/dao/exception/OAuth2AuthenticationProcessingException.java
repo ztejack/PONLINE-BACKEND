@@ -1,4 +1,4 @@
-package com.api.ponline.exception;
+package com.api.ponline.dao.exception;
 
 import org.springframework.security.core.AuthenticationException;
 

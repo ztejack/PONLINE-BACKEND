@@ -1,4 +1,4 @@
-package com.api.ponline.dto;
+package com.api.ponline.dao.response;
 
 import java.util.ArrayList;
 import java.util.List;

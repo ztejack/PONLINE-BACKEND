@@ -1,10 +1,10 @@
-package com.api.ponline.repository.user;
+package com.api.ponline.model.repository.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.api.ponline.model.user.User;
+import com.api.ponline.model.Entity.user.User;
 
 import java.util.List;
 import java.util.Optional;

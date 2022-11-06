@@ -5,8 +5,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import com.api.ponline.model.user.User;
-import com.api.ponline.model.user.UserRole;
+import com.api.ponline.model.Entity.user.User;
+import com.api.ponline.model.Entity.user.UserRole;
 
 import java.util.Collection;
 import java.util.Collections;

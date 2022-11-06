@@ -1,7 +1,7 @@
 package com.api.ponline.security.oauth2;
 
 import com.api.ponline.config.AppProperties;
-import com.api.ponline.exception.BadRequestException;
+import com.api.ponline.dao.exception.BadRequestException;
 import com.api.ponline.security.TokenProvider;
 import com.api.ponline.util.CookieUtils;
 import org.springframework.beans.factory.annotation.Autowired;

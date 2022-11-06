@@ -1,4 +1,4 @@
-package com.api.ponline.model.user;
+package com.api.ponline.model.Entity.user;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -13,12 +13,12 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-// ORM UNTUK OBJEK USER
+// Buat Entiti Users
 @Entity
-@Table(name = "TAB_USER", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "qewmearitly")
-})
+@Table(name = "TAB_USER")
 public class User {
+
+    // Field Entiti User
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "iduser", nullable = false)
@@ -59,6 +59,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
+    // Setter Getter Field Entiti User
     public Long getId() {
         return id;
     }
@@ -146,7 +147,5 @@ public class User {
     public void setTokResetPassword(String tokResetPassword) {
         this.tokResetPassword = tokResetPassword;
     }
-
-
     
 }

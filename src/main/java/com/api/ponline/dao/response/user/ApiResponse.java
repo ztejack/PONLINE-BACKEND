@@ -1,4 +1,4 @@
-package com.api.ponline.dto;
+package com.api.ponline.dao.response.user;
 
 public class ApiResponse {
     private boolean success;

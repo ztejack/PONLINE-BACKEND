@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
-import com.api.ponline.model.user.User;
+import com.api.ponline.model.Entity.user.User;
 import com.api.ponline.util.Templates.EmailContentTemplate;
 
 public class PonTools {

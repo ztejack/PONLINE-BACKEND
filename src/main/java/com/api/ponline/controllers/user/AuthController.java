@@ -1,4 +1,4 @@
-package com.api.ponline.controllers;
+package com.api.ponline.controllers.user;
 
 import java.io.UnsupportedEncodingException;
 
@@ -22,17 +22,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.api.ponline.dto.ApiResponse;
-import com.api.ponline.dto.AuthResponse;
-import com.api.ponline.dto.user.LoginRequest;
-import com.api.ponline.dto.user.ResetPasswordRequest;
-import com.api.ponline.dto.user.SignUpRequest;
-import com.api.ponline.exception.BadRequestException;
-import com.api.ponline.exception.ResourceNotFoundException;
-import com.api.ponline.model.user.AuthProvider;
-import com.api.ponline.model.user.User;
-import com.api.ponline.model.user.UserRole;
-import com.api.ponline.repository.user.UserRepository;
+import com.api.ponline.dao.exception.BadRequestException;
+import com.api.ponline.dao.exception.ResourceNotFoundException;
+import com.api.ponline.dao.request.user.LoginRequest;
+import com.api.ponline.dao.request.user.ResetPasswordRequest;
+import com.api.ponline.dao.request.user.SignUpRequest;
+import com.api.ponline.dao.response.user.ApiResponse;
+import com.api.ponline.dao.response.user.AuthResponse;
+import com.api.ponline.model.Entity.user.AuthProvider;
+import com.api.ponline.model.Entity.user.User;
+import com.api.ponline.model.Entity.user.UserRole;
+import com.api.ponline.model.repository.user.UserRepository;
 import com.api.ponline.security.TokenProvider;
 import com.api.ponline.util.PonTools;
 
@@ -116,7 +116,7 @@ public class AuthController {
         user.setName(signUpRequest.getName());
         user.setEmail(signUpRequest.getEmail());
         user.setPassword(signUpRequest.getPassword());
-        user.setProvider(AuthProvider.local);
+        user.setProvider( AuthProvider.local);
         user.setRole(UserRole.ROLE_USER);
 
         String token = RandomString.make(64);

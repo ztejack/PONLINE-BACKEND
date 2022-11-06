@@ -1,9 +1,9 @@
 package com.api.ponline.security;
 
 
-import com.api.ponline.exception.ResourceNotFoundException;
-import com.api.ponline.model.user.User;
-import com.api.ponline.repository.user.UserRepository;
+import com.api.ponline.dao.exception.ResourceNotFoundException;
+import com.api.ponline.model.Entity.user.User;
+import com.api.ponline.model.repository.user.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() ->
-                        new UsernameNotFoundException("User not found with email : " + email)
+                        new UsernameNotFoundException("Pengguna dengan email : " + email + " tidak ditemukan")
         );
 
         return UserPrincipal.create(user);

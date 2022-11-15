@@ -31,5 +31,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // (MANUAL)Query untuk cari user berdarakan email return 1 user
     @Query("SELECT u FROM User u WHERE u.email = :email")
     public User findOneByEmail(@PathParam("email") String email);
+
+    // (MANUAL)Query untuk cari user berdarakan email return 1 user
+    @Query("SELECT u FROM User u WHERE u.id = :id")
+    public User findOneById(@PathParam("id") Long id);
+
     
 }

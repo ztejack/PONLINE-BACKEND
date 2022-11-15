@@ -1,4 +1,4 @@
-package com.api.ponline.dao.response.user;
+package com.api.ponline.dao.Response;
 
 public class AuthResponse {
     private String accessToken;

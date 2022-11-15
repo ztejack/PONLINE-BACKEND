@@ -1,16 +1,28 @@
-package com.api.ponline.dao.request.user;
+package com.api.ponline.dao.Request;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
  
-public class LoginRequest {
+
+public class SignUpRequest {
+    @NotBlank
+    private String name;
+
     @NotBlank
     @Email
     private String email;
 
     @NotBlank
     private String password;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getEmail() {
         return email;

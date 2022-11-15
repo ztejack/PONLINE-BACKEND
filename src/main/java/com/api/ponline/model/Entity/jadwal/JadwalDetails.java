@@ -27,9 +27,6 @@ public class JadwalDetails implements Serializable{
     private Date dateToDo;
 
     @ManyToOne
-    private Jadwal jadwal;
-
-    @ManyToOne
     private Kolam kolam;
 
     @ManyToOne
@@ -41,14 +38,6 @@ public class JadwalDetails implements Serializable{
 
     public void setId(Long id) {
         this.id = id;
-    }
-    
-    public Jadwal getJadwal() {
-        return jadwal;
-    }
-
-    public void setJadwal(Jadwal jadwal) {
-        this.jadwal = jadwal;
     }
 
     public Kolam getKolam() {

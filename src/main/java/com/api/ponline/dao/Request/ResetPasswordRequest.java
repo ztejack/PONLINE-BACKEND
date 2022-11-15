@@ -1,4 +1,4 @@
-package com.api.ponline.dao.request.user;
+package com.api.ponline.dao.Request;
 
 import javax.validation.constraints.NotBlank;
 

@@ -22,7 +22,16 @@ public class Komunitas implements Serializable{
     private String nama;
 
     @Column(name = "wapkapoyju")
-    private String alamat;
+    private String alamat;    
+
+    public Komunitas() {
+    }    
+
+    public Komunitas(Long id, String nama, String alamat) {
+        this.id = id;
+        this.nama = nama;
+        this.alamat = alamat;
+    }
 
     public Long getId() {
         return id;

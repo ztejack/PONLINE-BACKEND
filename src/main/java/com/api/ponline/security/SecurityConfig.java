@@ -1,4 +1,4 @@
-package com.api.ponline.config;
+package com.api.ponline.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -15,9 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.api.ponline.security.CustomUserDetailsService;
-import com.api.ponline.security.RestAuthenticationEntryPoint;
-import com.api.ponline.security.TokenAuthenticationFilter;
 import com.api.ponline.security.oauth2.CustomOAuth2UserService;
 import com.api.ponline.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.api.ponline.security.oauth2.OAuth2AuthenticationFailureHandler;
@@ -44,8 +41,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
-    @Autowired
-    private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+    // @Autowired
+    // private HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
 
     @Bean
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
@@ -110,10 +107,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.css",
                         "/**/*.js")
                         .permitAll()
-                    .antMatchers("/auth/**", "/oauth2/**")
+                    .antMatchers("/auth/**", "/oauth2/**", "/documentation/**")
                         .permitAll()
-                    .antMatchers("/documentation/**")
-                        .permitAll()
+                    .antMatchers("/anggota/**")
+                        .hasAnyAuthority("ROLE_OWNER", "ROLE_PQOWNEDRETVY")
                     .anyRequest()
                         .authenticated()
                     .and()

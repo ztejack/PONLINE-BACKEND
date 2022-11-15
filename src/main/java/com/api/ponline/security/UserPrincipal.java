@@ -1,17 +1,16 @@
 package com.api.ponline.security;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import com.api.ponline.model.Entity.user.User;
-import com.api.ponline.model.Entity.user.UserRole;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 public class UserPrincipal implements OAuth2User, UserDetails {
     private Long id;
@@ -30,7 +29,7 @@ public class UserPrincipal implements OAuth2User, UserDetails {
     // Buat Kelas User Utama
     public static UserPrincipal create(User user) {
         // List otoritas yang akan di berikan ke user
-        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(UserRole.ROLE_USER.name()));
+        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()));
 
         // Kembalikan objek user utama
         return new UserPrincipal(

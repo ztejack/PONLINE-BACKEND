@@ -22,13 +22,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.api.ponline.dao.Request.LoginRequest;
+import com.api.ponline.dao.Request.ResetPasswordRequest;
+import com.api.ponline.dao.Request.SignUpRequest;
+import com.api.ponline.dao.Response.ApiResponse;
+import com.api.ponline.dao.Response.AuthResponse;
 import com.api.ponline.dao.exception.BadRequestException;
 import com.api.ponline.dao.exception.ResourceNotFoundException;
-import com.api.ponline.dao.request.user.LoginRequest;
-import com.api.ponline.dao.request.user.ResetPasswordRequest;
-import com.api.ponline.dao.request.user.SignUpRequest;
-import com.api.ponline.dao.response.user.ApiResponse;
-import com.api.ponline.dao.response.user.AuthResponse;
 import com.api.ponline.model.Entity.user.AuthProvider;
 import com.api.ponline.model.Entity.user.User;
 import com.api.ponline.model.Entity.user.UserRole;

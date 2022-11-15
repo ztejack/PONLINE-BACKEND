@@ -1,9 +1,9 @@
-package com.api.ponline.dao.response;
+package com.api.ponline.dao.Response;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResponseData<T> {
+public class AbstractResponse<T> {
 
     private Boolean status;
     private List<String> messages = new ArrayList<>();
